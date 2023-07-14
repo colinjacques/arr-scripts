@@ -132,7 +132,7 @@ YoutubeSeriesDownloaderProcess () {
 		    episodeName=$(echo $seriesEpisdodeData | jq -r .episodeName)
 		
 		    # Construct search query for YouTube
-		    searchQuery="SeriesName Episode ${episodeNumber} ${episodeName}"
+		    searchQuery="SeriesName Season ${episodeSeasonNumber} Episode ${episodeNumber} ${episodeName}"
 		    if [[ $episodeSeasonNumber == "Campaign"* ]]; then
 		        # Update search query for seasonNumber in the "Campaign" format
 		        searchQuery="SeriesName ${episodeSeasonNumber} Episode ${episodeNumber} ${episodeName}"
