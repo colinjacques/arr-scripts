@@ -129,12 +129,15 @@ YoutubeSeriesDownloaderProcess () {
 		    seriesEpisdodeData=$(echo $seriesEpisodeData | jq -r ".[] | select(.tvdbId==$episodeId)")
 		    episodeSeasonNumber=$(echo $seriesEpisdodeData | jq -r .seasonNumber)
 		    episodeNumber=$(echo $seriesEpisdodeData | jq -r .episodeNumber)
+		    episodeName=$(echo $seriesEpisdodeData | jq -r .episodeName)
 		
 		    # Construct search query for YouTube
-		    searchQuery="SeriesName Season ${episodeSeasonNumber} Episode ${episodeNumber}"
+		    searchQuery="SeriesName Episode ${episodeNumber} ${episodeName}"
 		    if [[ $episodeSeasonNumber == "Campaign"* ]]; then
 		        # Update search query for seasonNumber in the "Campaign" format
-		        searchQuery="SeriesName ${episodeSeasonNumber} Episode ${episodeNumber}"
+		        searchQuery="SeriesName ${episodeSeasonNumber} Episode ${episodeNumber} ${episodeName}"
+		    elif [[ ! -z $episodeSeasonNumber ]]; then
+		        searchQuery="SeriesName Season ${episodeSeasonNumber} Episode ${episodeNumber} ${episodeName}"
 		    fi
 		
 		    # Search YouTube for the downloadUrl
@@ -142,7 +145,7 @@ YoutubeSeriesDownloaderProcess () {
 		    downloadUrl=$(echo "$youtubeSearchResults" | grep -iEo 'https://www.youtube.com/watch\?v=[^&"]+')
 		
 		    if [ -z $downloadUrl ]; then
-		        network="$(echo "$tvdbPageData" | grep -i "/companies/youtube")"
+		        network="$(echo "$tvdbPageData" | grep -iE "/companies/(youtube|twitch)")"
 		        if [ ! -z "$network" ]; then 
 		            downloadUrl=$(echo "$tvdbPageData" | grep -iws "production code" -A 2 | sed 's/\ //g' | tail -n1)
 		            if [ ! -z $downloadUrl ]; then
